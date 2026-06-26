@@ -15,11 +15,7 @@ let users = [
   { username: "Venellope" },
 ];
 
-let messages = [
-  { text: "hola", user1: "jose", user2: "felipe" },
-  { text: "que tal", user1: "felipe", user2: "jose" },
-  { text: "bien", user1: "jose", user2: "felipe" },
-];
+let messages = [];
 
 app.get("", (req, res) => {
   res.send({ text: "hello from my api" });
@@ -44,23 +40,18 @@ app.post("/login-user", (req, res) => {
 
 app.post("/register-message", (req, res) => {
   messages.push(req.body.message);
-  console.log(messages);
   res.send({ data: req.body.message, status: "ok" });
 });
 
 app.post("/get-messages", (req, res) => {
   let user1 = req.body.user1;
   let user2 = req.body.user2;
-  console.log(user1, user2);
 
-  let result = [];
-  messages.forEach((m) => {
-    if (
+  let result = messages.filter(
+    (m) =>
       (m.user1 == user1 && m.user2 == user2) ||
-      (m.user1 == user2 && m.user2 == user1)
-    ) {
-        result.push(m)
-    }
-  });
+      (m.user1 == user2 && m.user2 == user1),
+  );
+
   res.send({ messages: result, status: "ok" });
 });
