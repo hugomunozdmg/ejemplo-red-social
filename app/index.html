@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./index.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1 id="username-title"></h1>
+    <div class="main-container" id="register">
+      <h3>Register:</h3>
+      <label for="">Username:</label>
+      <input type="text" id="username-register-input" />
+      <label for="">Pasword:</label>
+      <input type="text" id="password-register-input" />
+      <button id="register-button">register</button>
+    </div>
+    <div class="main-container" id="login">
+      <h3>Login:</h3>
+      <label for="">Username:</label>
+      <input type="text" id="username-login-input" />
+      <label for="">Pasword:</label>
+      <input type="text" id="password-login-input" />
+      <button id="login-button">login</button>
+    </div>
+
+    <div class="main-container" id="users">
+      <h3>Users:</h3>
+      <select id="users-list"></select>
+    </div>
+
+    <div class="main-container" id="chat">
+      <p id="selected-friend"></p>
+      <div id="messages"></div>
+      <div>
+        <input type="text" id="input-message" />
+        <button id="button-send-message">send</button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { ApiService } from "./apiService.js";
+
+      const apiService = new ApiService();
+      let users = await apiService.getUsersFromApi();
+      let loggedUser = "jose";
+      let selectedFriend = "";
+
+      let messages = [];
+
+      document
+        .getElementById("register-button")
+        .addEventListener("click", async () => {
+          let username = document.getElementById(
+            "username-register-input",
+          ).value;
+          let password = document.getElementById(
+            "password-register-input",
+          ).value;
+          console.log(await apiService.registerUser(username, password));
+        });
+
+      document
+        .getElementById("login-button")
+        .addEventListener("click", async () => {
+          let username = document.getElementById("username-login-input").value;
+          let password = document.getElementById("password-login-input").value;
+          console.log(await apiService.loginUser(username, password));
+          loggedUser = username;
+          document.getElementById("username-title").innerText = loggedUser;
+        });
+
+      //================
+
+      document.getElementById("users-list").addEventListener("input", (e) => {
+        selectedFriend = e.target.value;
+        document.getElementById("selected-friend").innerText = selectedFriend;
+      });
+
+      document
+        .getElementById("button-send-message")
+        .addEventListener("click", (e) => {
+          let message = document.getElementById("input-message").value;
+          apiService.registerMessage(loggedUser, selectedFriend, message);
+        });
+
+      setInterval(async () => {
+        let result = await apiService.getMessages(loggedUser, selectedFriend);
+        messages = result.messages;
+        showMessages(messages);
+      }, 500);
+
+      //================
+
+      showUsers();
+
+      function showMessages(messages) {
+        document.getElementById("messages").innerHTML = "";
+        messages.forEach((m) => {
+          document.getElementById("messages").innerHTML +=
+            `<div class="${loggedUser == m.user1 ? "container-own-message" : "container-friend-message"}"><p class="${loggedUser == m.user1 ? "own-message" : "friend-message"}">${m.text}</p></div>`;
+        });
+      }
+
+      function sendMessage() {
+        let message = document.getElementById("input-message").value;
+        console.log(message);
+      }
+
+      async function showUsers() {
+        users.forEach((user) => {
+          document.getElementById("users-list").innerHTML +=
+            `<option>${user.username}</option>`;
+        });
+      }
+    </script>
+  </body>
+</html>

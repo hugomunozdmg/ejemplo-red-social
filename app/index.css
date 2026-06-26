@@ -1,0 +1,30 @@
+.main-container {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  margin: 1rem;
+}
+
+.own-message {
+  background-color: rgb(166, 250, 166);
+  width: fit-content;
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.friend-message {
+  width: fit-content;
+  margin: 10px;
+  padding: 5px;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+
+.container-own-message {
+    display: flex;
+    justify-content: end;
+}
